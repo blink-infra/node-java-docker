@@ -39,25 +39,11 @@ RUN curl -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_V
     unzip terraform.zip -d /usr/bin && rm -f terraform.zip
 
 # Install Java
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		bzip2 \
-		unzip \
-		xz-utils \
-	&& rm -rf /var/lib/apt/lists/*
-
-RUN echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
-
-# Default to UTF-8 file.encoding
-ENV LANG C.UTF-8
-
-ENV JAVA_HOME /usr/lib/jvm/default-java
-
-RUN set -x \
-	&& apt-get update \
-	&& apt-get install -y \
-		default-jdk \
-		ca-certificates-java \
-	&& rm -rf /var/lib/apt/lists/*
-
-# see CA_CERTIFICATES_JAVA_VERSION notes above
-RUN /var/lib/dpkg/info/ca-certificates-java.postinst configure
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" && \
+    apt-get update && \
+    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    apt-get install -y oracle-java8-installer && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/oracle-jdk8-installer
