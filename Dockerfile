@@ -34,7 +34,7 @@ RUN set -x &&\
     mv /tmp/docker/* /usr/bin
 
 # Install Terraform
-ENV TERRAFORM_VERSION=0.9.11
+ENV TERRAFORM_VERSION=0.10.6
 RUN curl -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     unzip terraform.zip -d /usr/bin && rm -f terraform.zip
 
