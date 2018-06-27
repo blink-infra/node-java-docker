@@ -15,16 +15,14 @@ RUN apt-get update && \
 RUN pip3 install awscli
 
 # Install nvm
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+USER node
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 ENV NVM_DIR="/home/node/.nvm"
-RUN mv /root/.nvm $NVM_DIR && chown -R node:node $NVM_DIR
 
-# Wrap nvm into a script
-RUN /bin/echo -e '#! /bin/bash\n\
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"\n\
-nvm $@'\
->> /bin/nvm
-RUN chmod 0755 /bin/nvm
+# Set up nvm environment
+USER root
+COPY bash_profile /home/node/.bash_profile
+RUN chown node:node /home/node/.bash_profile
 
 # Install Docker (for remote builds)
 RUN set -x &&\
@@ -34,7 +32,7 @@ RUN set -x &&\
     mv /tmp/docker/* /usr/bin
 
 # Install Terraform
-ENV TERRAFORM_VERSION=0.10.6
+ENV TERRAFORM_VERSION=0.11.7
 RUN curl -o terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     unzip terraform.zip -d /usr/bin && rm -f terraform.zip
 
